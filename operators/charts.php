@@ -256,17 +256,17 @@ if(!$link)
 <!-- Area Chart -->
             <div class="card shadow mb-6">
     <?php
-     $query = $link->query("SELECT busname, seatno from buses GROUP BY busname");
+     $query = $link->query("SELECT sum(price) , concat(froms, ' to ' ,destinations) as route from bookingtickets GROUP BY froms, destinations");
 
      foreach($query as $data)
      {
-         $busname[] = $data['busname'];
-         $seatno[] = $data['seatno'];
+         $route[] = $data['route'];
+         $fare[] = $data['sum(price)'];
      }
     
     ?>
                        <div class="card-header py-3">
-                             <h6 class="m-0 font-weight-bold text-primary">Bus with its seats</h6>
+                             <h6 class="m-0 font-weight-bold text-primary">Routes & Total Income</h6>
                        </div>
                     <div class="card-body">
                           <div class="chart-bar">
@@ -282,19 +282,20 @@ if(!$link)
     <div class="col-xl-6 col-lg-5">
     <div class="card shadow mb-6">
     <?php
-     $query = $link->query("SELECT price, froms, destination from assigntrip GROUP BY busname");
+     $query = $link->query("SELECT count(fullname)*100.0/sum(count(fullname)) over() as tickets, concat(froms, ' to ' ,destinations) as name from bookingtickets GROUP BY froms, destinations");
      
 
      foreach($query as $data)
      {
-         $froms[] = $data['froms'];
-         $destination[] = $data['destination'];
-         $price[] = $data['price'];
+        
+        
+         $destination[] = $data['name'];
+         $tickets[] = $data['tickets'];
      }
     
     ?>
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Assigned Trip</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Trip with highest demand</h6>
         </div>
                        
             <div class="card-body">

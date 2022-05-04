@@ -14,34 +14,7 @@
 		echo mysqli_connect_error();
 	}
 
-    if(isset($_POST['send'])){
-        $driversname = $_POST['driversname'];
-        $nida = $_POST['nida'];
-        $licenseno = $_POST['licenseno'];
-        $levels = $_POST['levels'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
-    
-        $sql = "INSERT INTO drivers (driversname, nida, licenseno, levels, phone, email) VALUES ( '$driversname', '$nida', '$licenseno', '$levels', '$phone', '$email' ) ";
-        $result = mysqli_query($link, $sql);
-    }
-
-
-    $query = "SELECT * from drivers";
-
-    $result = mysqli_query($link, $query);
-
-    if (isset($_GET['delete'])){
-        $id = $_GET['delete'];
-        $mysqli = "DELETE FROM drivers WHERE id=$id";
-        $results = mysqli_query($link, $mysqli);
-
-        $_SESSION['message'] = "Record has been deleted!";
-        $_SESSION['msg_type'] = "danger";
-
-        
-    }
-    
+  
  ?>
  
  <!-- Content Wrapper -->
@@ -225,152 +198,17 @@
 
             <div class="container-fluid">
 
-    <!-- DataTales Example -->
-                  
-
-        <!-- Topbar Navbar -->
-    <div class="card shadow mb-4">
-      <div class="card-header py-3">
-        <ul class="navbar-nav ml-auto">
-          
-
-            <!-- Nav Item - Alerts -->
-           
-           <li class="nav-item dropdown no-arrow">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#driverModal">
-                    <h5> <b>Add Driver</b> </h5>
-                        
-                    </a>
-                
-                
-                <!-- Add form -->
-    <div class="modal fade" id="driverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                    
-                    <form action="drivers.php" method="POST">
-               <div class="modal-body">
-               <h4><b>NEW DRIVER</b></h4>
-                   <div class="form-group">
-                      <label for="">Full name</label>
-                      <input type="text" name="driversname" class="form-control" placeholder="Enter full name">
-                   </div>
-
-                   <div class="form-group">
-                      <label for="">NATIONAL ID</label>
-                      <input type="text" name="nida" class="form-control" placeholder="Enter nida number">
-                   </div>
-
-                   <div class="form-group">
-                      <label for="">License number </label>
-                      <input type="text" name="licenseno" class="form-control" placeholder="Enter license number">
-                   </div>
-
-                   
-                   <div class="form-group">
-                      <label for="">License level </label>
-                      <select name="levels" id="buses" class="form-control">
-                          <option value="level A"> level A </option>
-                          <option value="level B"> level B </option>
-                          <option value="level C"> level C </option>
-                      </select>
-
-                   </div>
-
-                   
-                   <div class="form-group">
-                      <label for="">Phone number </label>
-                      <input type="text" name="phone" class="form-control" placeholder="Enter phone number">
-                   </div>
-                    
-                   <div class="form-group">
-                      <label for="">Email Address</label>
-                      <input type="text" name="email" class="form-control" placeholder="Enter email address">
-                   </div>
-
-
-                                <button type="send" class="btn btn-primary" name="send">Save</button>        
-
-            </form>
-              </div>
-                </div>
-              </div>
-           </li>  
-                        
-        </ul>
-</div>
-        <!-- Content Row -->
-               <div class="card-body">
-                   <div class="form-outline mb-4">
-                       <input type="search" class="form-control" id="dataTable-search-input" placeholder="Search">       
-                   </div>
-                   <div id="datatable">
-
-                   </div>
-                   <table class="table table-sm" id="dataTable" width="100%" cellspacing="0" >
-                           <thead>
-                               <tr>
-                                   <th>ID</th>
-                                   <th>Driver Names</th>
-                                   <th>National ID</th>
-                                   <th>License No</th>
-                                   <th>Level</th>
-                                   <th>Phone</th>
-                                   <th>email</th> 
-                                   <th>Actions</th>
-                               </tr>
-                           </thead>
-                           <?php 
-                                while($row1=mysqli_fetch_assoc($result))
-                                {
-                            ?>
-                           <tbody>
-             
-                               <tr>
-                                   <td><?php echo $row1['id']; ?></td>
-                                   <td><?php echo $row1['driversname']; ?></td>
-                                   <td><?php echo $row1['nida']; ?></td>
-                                   <td><?php echo $row1['licenseno']; ?></td>
-                                   <td><?php echo $row1['levels']; ?></td>
-                                   <td><?php echo $row1['phone']; ?></td>
-                                   <td><?php echo $row1['email']; ?></td>
-                                   <td> 
-                                       <a href="drivers.php?edit=<?php echo $row1['id']; ?>" class="btn btn-info">Edit</a>
-                                       <a href="drivers.php?delete=<?php echo $row1['id']; ?>" class="btn btn-danger">Delete</a>
-                                   </td>
-                               </tr>
-                           </tbody>
-                <?php
-                    }
-
-                ?>
-                    </table>
-                         </div>
+   
                     </div>
                 </div>
              
                 </div>
     
-    </div>
     <!-- /.container-fluid -->
 
 
 
-<script>
-    const data2 = {
-        columns: []
-        rows:[
-            []
-        ],
-    };
 
-    const instance = new mdb.Datatable(document.getElementById('datatable'), data2)
-
-    document.getElementById('datatable-search-input').addEventListener('input', (e) => {
-        instance.input-group(e.target.value);
-    });
-</script>
 
 <?php 
 include('includes/scripts.php');

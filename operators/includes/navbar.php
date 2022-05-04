@@ -8,11 +8,11 @@
  <ul class="navbar-nav bg-dark sidebar sidebar-dark accordion" id="accordionSidebar">
 
 <!-- Sidebar - Brand -->
-<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+<a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
     <div class="sidebar-brand-icon rotate-n-15">
         <i class="fas fa-laugh-wink"></i>
     </div>
-    <div class="sidebar-brand-text mx-3"> ABOOD Admin </div>
+    <div class="sidebar-brand-text mx-3"> OPERATOR </div>
 </a>
 
 <!-- Divider -->
@@ -70,7 +70,7 @@
 
 <!-- Nav Item - Pages Collapse Menu -->
 <li class="nav-item">
-    <a class="nav-link" href="assigntrip.php">
+    <a class="nav-link" href="tickets.php">
     <i class="fas fa-ticket-alt"></i>
         <span>TICKETS</span></a>
 </li>
@@ -81,6 +81,7 @@
         <i class="fas fa-fw fa-chart-area"></i>
         <span>Charts</span></a>
 </li>
+
 
 <!-- Nav Item - Transactions -->
 <li class="nav-item">

@@ -41,6 +41,23 @@
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.dark {
+  --bg-body: var(--dark-body);
+  --bg-main: var(--dark-main);
+  --bg-second: var(--dark-second);
+  --color-hover: var(--dark-hover);
+  --color-txt: var(--dark-text);
+}
+
+.light {
+  --bg-body: var(--light-body);
+  --bg-main: var(--light-main);
+  --bg-second: var(--light-second);
+  --color-hover: var(--light-hover);
+  --color-txt: var(--light-text);
+}
+
+
 *,
 *::before,
 *::after {

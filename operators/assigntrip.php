@@ -15,15 +15,12 @@
    
 
     if(isset($_POST['send'])){
-        $driversname = $_POST['driversname'];
-        $froms = $_POST['froms'];
-        $via = $_POST['via'];
-        $destination = $_POST['destination'];
-        $busname = $_POST['busname'];
-        $price = $_POST['price'];
+        $driversname = $_POST['driversname']; 
+        $route_id = $_POST['route_id'];
+        $bus_id = $_POST['bus_id'];
         $travel_time = $_POST['travel_time'];
     
-        $sql = "INSERT INTO assigntrip (driversname, froms, via, destination,busname, price, travel_time) VALUES ( '$driversname', '$froms', '$via', '$destination', '$busname', '$price', '$travel_time' ) ";
+        $sql = "INSERT INTO assigntrip (driversname, route_id,bus_id, travel_time) VALUES ( '$driversname','$route_id', '$bus_id','$travel_time' ) ";
         $result = mysqli_query($link, $sql);
     }
 
@@ -31,14 +28,11 @@
    if(isset($_POST['update_btn'])){
     $edit_id = $_POST['edit_id'];
     $driversname = $_POST['driversname'];
-    $froms = $_POST['froms'];
-    $via = $_POST['via'];
-    $destination = $_POST['destination'];
-    $busname = $_POST['busname'];
-    $price = $_POST['price'];
+    $route_id = $_POST['route_id'];
+    $bus_id = $_POST['bus_id'];
     $travel_time = $_POST['travel_time'];
 
-    $query = "UPDATE assigntrip SET driversname='$driversname', froms='$froms', via='$via', destination='$destination', busname='$busname', price='$price', travel_time='$travel_time' WHERE id='$edit_id' ";
+    $query = "UPDATE assigntrip SET driversname='$driversname', route_id='$route_id', bus_id='$bus_id',  travel_time='$travel_time' WHERE trip_id='$edit_id' ";
     $query_run = mysqli_query($link, $query);
 
     if($query_run){
@@ -59,8 +53,8 @@
     $result = mysqli_query($link, $query);
 
     if (isset($_GET['delete'])){
-        $id = $_GET['delete'];
-        $mysqli = "DELETE FROM assigntrip WHERE id=$id";
+        $trip_id = $_GET['delete'];
+        $mysqli = "DELETE FROM assigntrip WHERE trip_id=$trip_id";
         $results = mysqli_query($link, $mysqli);
 
         $_SESSION['message'] = "Record has been deleted!";
@@ -265,10 +259,17 @@
             <!-- Nav Item - Alerts -->
            
             <li class="nav-item dropdown no-arrow">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#tripModal">
-                        <h5><b>Add Trip</b></h5>
-                        
-                    </a>
+
+            <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between">
+                    <h4 class="card-title">List of Trips</h4> 
+                      <button class="btn btn-primary btn-icon-text" data-toggle="modal" data-target="#tripModal">
+                        New Trip
+                        <i class="btn-icon-append fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                    
                 
                 
                 <!-- Add form -->
@@ -300,14 +301,14 @@
                    
                    <div class="form-group">
                       <label for="">FROM </label>
-                      <select name="froms" id="froms" class="form-control">
+                      <select name="route_id" id="froms" class="form-control">
                           <option > from where</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT froms FROM routes ";
+                            $query = "SELECT  DISTINCT froms,route_id FROM routes GROUP BY froms ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['froms'].'">'.$row['froms'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['froms'].'</option>';
                             }
 
                             ?>
@@ -316,14 +317,14 @@
                    </div>
                    <div class="form-group">
                       <label for="">VIA</label>
-                      <select name="via" id="via" class="form-control">
+                      <select name="route_id" id="via" class="form-control">
                           <option > via </option>
                             <?php
                             
-                            $query = "SELECT DISTINCT via FROM routes ";
+                            $query = "SELECT  via,route_id FROM routes GROUP BY via ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['via'].'">'.$row['via'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['via'].'</option>';
                             }
 
                             ?>
@@ -334,14 +335,14 @@
 
                    <div class="form-group">
                       <label for="">DESTINATION </label>
-                      <select name="destination" id="destination" class="form-control">
+                      <select name="route_id" id="destination" class="form-control">
                           <option > To where</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT destination FROM routes ";
+                            $query = "SELECT destination,route_id FROM routes GROUP BY destination ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['destination'].'">'.$row['destination'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['destination'].'</option>';
                             }
 
                             ?>
@@ -350,14 +351,14 @@
                    </div>
                    <div class="form-group">
                       <label for="">BUS NAME </label>
-                      <select name="busname" id="busname" class="form-control">
+                      <select name="bus_id" id="busname" class="form-control">
                           <option > To where</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT busname FROM buses ";
+                            $query = "SELECT DISTINCT busname,bus_id FROM buses ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['busname'].'">'.$row['busname'].'</option>';
+                                echo '<option value="'.$row['bus_id'].'">'.$row['busname'].'</option>';
                             }
 
                             ?>
@@ -367,14 +368,14 @@
 
                    <div class="form-group">
                       <label for="">PRICE </label>
-                      <select name="price" id="price" class="form-control">
+                      <select name="route_id" id="price" class="form-control">
                           <option > Select bus fare</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT price FROM routes ";
+                            $query = "SELECT price,route_id FROM routes GROUP BY price  ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['price'].'">'.$row['price'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['price'].'</option>';
                             }
 
                             ?>
@@ -400,36 +401,50 @@
         </ul>
 </div>
         <!-- Content Row -->
-               <div class="card-body">
-                   <div class="form-outline mb-4">
-                       <input type="search" class="form-control" id="dataTable-search-input" placeholder="Search">       
-                   </div>
-                   <div id="datatable">
-
-                   </div>
-                   <div class="table-responsive">
-                        <table class="table table-sm" id="dataTable" width="100%" cellspacing="0" >
-                           <thead>
+        <div class="card-body">
+                 <div class="col-md-3">
+                      <form method="POST" action="">
+                           <div class="input-group mb-3">
+                                <input type="search" class="form-control" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"  placeholder="Search...." style="width: 150px" required=""/>
+                                <button type="submit" name="search" class="btn btn-primary"><i class="fas fa-search fa-sm"></i></button>
+                               
+                           </div>
+                      </form>
+                  </div>
+        <div class="table-responsive" >
+                  <?php
+	// require the database connection
+	$link = new PDO( 'mysql:host=localhost;dbname=bus_booking', 'root', '');
+	if(!$link){
+		die("Error: Failed to coonect to database!");
+	}
+	if(ISSET($_POST['search'])){
+?>
+                        <table class="table table-sm"   cellspacing="0" >
+                           <thead class="table table-sm alert-info">
                                <tr>
-                                   <th>ID</th>
-                                   <th>DRIVER NAMES</th>
-                                   <th>FROM</th>
+                                   <th>s/n</th>
+                                   <th>Driver name</th>
+                                   <th>From</th>
                                    <th>Via</th>
-                                   <th>DESTINATION</th>
-                                   <th>BUS NAME</th>
-                                   <th>PRICE</th>
-                                   <th>TIME</th>
+                                   <th>Destination</th>
+                                   <th>Bus name</th>
+                                   <th>Price</th>
+                                   <th>Time</th>
                                    <th>Actions</th>
                                </tr>
                            </thead>
-                           <?php 
-                                while($row1=mysqli_fetch_assoc($result))
-                                {
-                            ?>
-                           <tbody>
-             
+                           
+                           <tbody style="height: 350px">
+            <?php
+                $i = 1;
+				$keyword = $_POST['keyword'];
+				$query = $link->prepare("SELECT *  FROM assigntrip,buses,routes where buses.bus_id = assigntrip.bus_id and routes.route_id = assigntrip.route_id ");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
                                <tr>
-                                   <td><?php echo $row1['id']; ?></td>
+                                   <td><?php echo $i++ ?></td>
                                    <td><?php echo $row1['driversname']; ?></td>
                                    <td><?php echo $row1['froms']; ?></td>
                                    <td><?php echo $row1['via']; ?></td>
@@ -437,20 +452,97 @@
                                    <td><?php echo $row1['busname']; ?></td>
                                    <td><?php echo $row1['price']; ?></td>
                                    <td><?php echo $row1['travel_time']; ?></td>
-                                   <td> 
-                                      <form action="edit_trip.php" method="POST">
-                                             <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
-                                             <button type="submit" name="edit_data" class="btn btn-success">Edit</button>
-                                             <a href="assigntrip.php?delete=<?php echo $row1['id']; ?>" class="btn btn-danger">Delete</a>
-                                       </form>
-                                   </td>
-                               </tr>
-                           </tbody>
-                <?php
-                    }
 
-                ?>
+                                   <td class="text-center">
+                                   <form action="edit_trip.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['trip_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="assigntrip.php?delete=<?php echo $row1['trip_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                  
+                               </tr>
+                               <?php
+				}
+			?>
+                           </tbody>
+               
                     </table>
+                    <?php		
+	}else{
+?>
+
+<table class="table table-sm" cellspacing="0" >
+                            
+                            <thead class="table table-sm alert-info">
+                                <tr> 
+                               
+                                <th>s/n</th>
+                                   <th>Driver name</th>
+                                   <th>From</th>
+                                   <th>Via</th>
+                                   <th>Destination</th>
+                                   <th>Bus name</th>
+                                   <th>Price</th>
+                                   <th>Time</th>
+                                   <th>Actions</th>
+                               </tr>
+                           </thead>
+                           
+                           <tbody>
+                           <?php
+                $i = 1;
+				$query = $link->prepare("SELECT *  FROM assigntrip,buses,routes where buses.bus_id = assigntrip.bus_id and routes.route_id = assigntrip.route_id");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
+                 <tr>
+                                   <td><?php echo $i++ ?></td>
+                                   <td><?php echo $row1['driversname']; ?></td>
+                                   <td><?php echo $row1['froms']; ?></td>
+                                   <td><?php echo $row1['via']; ?></td>
+                                   <td><?php echo $row1['destination']; ?></td>
+                                   <td><?php echo $row1['busname']; ?></td>
+                                   <td><?php echo $row1['price']; ?></td>
+                                   <td><?php echo $row1['travel_time']; ?></td>
+                                   
+                                   <td class="text-center">
+                                   <form action="edit_trip.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['trip_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="assigntrip.php?delete=<?php echo $row1['trip_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                  
+                               </tr>
+                               <?php
+				}
+			?>
+                           </tbody>
+                           </table>
+<?php
+}
+$link = null;
+?>
+                         </div>
                          </div>
                          </div>
                     </div>
@@ -458,25 +550,10 @@
              
                 </div>
     
-    </div>
     <!-- /.container-fluid -->
 
 
 
-<script>
-    const data2 = {
-        columns: []
-        rows:[
-            []
-        ],
-    };
-
-    const instance = new mdb.Datatable(document.getElementById('datatable'), data2)
-
-    document.getElementById('datatable-search-input').addEventListener('input', (e) => {
-        instance.input-group(e.target.value);
-    });
-</script>
 
 <?php 
 include('includes/scripts.php');

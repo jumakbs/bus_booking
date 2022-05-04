@@ -1,6 +1,17 @@
 <?php 
+
+session_start();
 include('includes/header.php');
 include('includes/navbar.php');
+
+
+$link = mysqli_connect('localhost', 'root','', 'bus_booking');
+
+if(!$link)
+ {
+     echo mysqli_connect_error();
+ }
+
  ?>
        
 
@@ -182,7 +193,12 @@ include('includes/navbar.php');
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">JUMA SHAIBU</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                <?php
+                                        echo $_SESSION['username']; 
+                                        
+                                    ?>
+                                </span>
                                 <img class="img-profile rounded-circle"
                                     src="img/undraw_profile.svg">
                             </a>
@@ -223,69 +239,65 @@ include('includes/navbar.php');
 
 <!-- Page Heading -->
 <h1 class="h3 mb-2 text-gray-800">ANALYSIS CHARTS</h1>
-  <!-- Content Row -->
-  <div class="row">
+   <!-- Content Row -->
+                    <!-- Content Row -->
+                    <div class="row">    
+        <div class="col-xl-6 col-lg-6">
 
-<div class="col-xl-8 col-lg-7">
+<!-- Area Chart -->
+<div class="card shadow mb-6">
+            <?php
+     $query = $link->query("SELECT price as fare, concat(froms, ' to ' ,destination) as names from routes GROUP BY froms, destination");
+     
 
-    <!-- Area Chart -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Area Chart</h6>
-        </div>
-        <div class="card-body">
-            <div class="chart-area">
-                <canvas id="myAreaChart"></canvas>
+     foreach($query as $datas)
+     {
+        
+        
+         $routes[] = $datas['names'];
+         $fare[] = $datas['fare'];
+     }
+    
+    ?>
+                       <div class="card-header py-3">
+                             <h6 class="m-0 font-weight-bold text-primary">Trip with its price</h6>
+                       </div>
+                    <div class="card-body">
+                          <div class="chart-bar">
+                              <canvas id="myBarChart"></canvas>
+                          </div>
+        
+                    </div>
             </div>
-            <hr>
-            Styling for the area chart can be found in the
-            <code>/js/demo/chart-area-demo.js</code> file.
+
+            
+            
+    </div>
+    <div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-6">
+   
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"> </h6>
+        </div>
+                       
+            <div class="card-body">
+                    <div class="chart-bar">
+                            <canvas id="myBarChart"></canvas>
+                    </div>
+        
+            </div>
         </div>
     </div>
-
-    <!-- Bar Chart -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
-        </div>
-        <div class="card-body">
-            <div class="chart-bar">
-                <canvas id="myBarChart"></canvas>
             </div>
-            <hr>
-            Styling for the bar chart can be found in the
-            <code>/js/demo/chart-bar-demo.js</code> file.
+            <!-- End of Main Content -->
+
+            
+
         </div>
+        <!-- End of Content Wrapper -->
+
     </div>
-
-</div>
-
-<!-- Donut Chart -->
-<div class="col-xl-4 col-lg-5">
-    <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Donut Chart</h6>
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="chart-pie pt-4">
-                <canvas id="myPieChart"></canvas>
-            </div>
-            <hr>
-            Styling for the donut chart can be found in the
-            <code>/js/demo/chart-pie-demo.js</code> file.
-        </div>
-    </div>
-</div>
-</div>
-
-</div>
-<!-- /.container-fluid -->
-
-</div>
-<!-- End of Main Content -->
-
+    <!-- End of Page Wrapper -->
   
 <?php 
 include('includes/scripts.php');

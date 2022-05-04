@@ -35,7 +35,7 @@
         $email = $_POST['email'];
     
 
-    $query = "UPDATE drivers SET driversname='$driversname', nida='$nida', licenseno='$licenseno', levels='$levels', phone='$phone', email='$email' WHERE id='$edit_id' ";
+    $query = "UPDATE drivers SET driversname='$driversname', nida='$nida', licenseno='$licenseno', levels='$levels', phone='$phone', email='$email' WHERE driver_id='$edit_id' ";
     $query_run = mysqli_query($link, $query);
 
     if($query_run){
@@ -49,13 +49,14 @@
 }
 
 
+
     $query = "SELECT * from drivers";
 
     $result = mysqli_query($link, $query);
 
     if (isset($_GET['delete'])){
-        $id = $_GET['delete'];
-        $mysqli = "DELETE FROM drivers WHERE id=$id";
+        $driver_id = $_GET['delete'];
+        $mysqli = "DELETE FROM drivers WHERE driver_id=$driver_id";
         $results = mysqli_query($link, $mysqli);
 
         $_SESSION['message'] = "Record has been deleted!";
@@ -259,11 +260,16 @@
             <!-- Nav Item - Alerts -->
            
             <li class="nav-item dropdown no-arrow">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#driverModal">
-                        <h5> <b>Add Driver</b> </h5>
-                        
-                    </a>
-                
+            <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between">
+                    <h4 class="card-title">List of Drivers</h4> 
+                      <button class="btn btn-primary btn-icon-text" data-toggle="modal" data-target="#driverModal">
+                        New Driver
+                        <i class="btn-icon-append fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                   
                 
                 <!-- Add form -->
     <div class="modal fade" id="driverModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -324,17 +330,30 @@
         </ul>
 </div>
         <!-- Content Row -->
-               <div class="card-body">
-                   <div class="form-outline mb-4">
-                       <input type="search" class="form-control" id="dataTable-search-input" placeholder="Search">       
-                   </div>
-                   <div id="datatable">
-
-                   </div>
-                   <table class="table table-sm" id="dataTable" width="100%" cellspacing="0" >
-                           <thead>
+        <div class="card-body">
+              
+              <div class="col-md-3">
+                      <form method="POST" action="">
+                           <div class="input-group mb-3">
+                                <input type="search" class="form-control" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"  placeholder="Search...." style="width: 150px" required=""/>
+                                <button type="submit" name="search" class="btn btn-primary"><i class="fas fa-search fa-sm"></i></button>
+                               
+                           </div>
+                      </form>
+                  </div>
+       <div class="table-responsive">
+       <?php
+	// require the database connection
+	$link = new PDO( 'mysql:host=localhost;dbname=bus_booking', 'root', '');
+	if(!$link){
+		die("Error: Failed to coonect to database!");
+	}
+	if(ISSET($_POST['search'])){
+?>
+                   <table class="table table-sm"  cellspacing="0" >
+                           <thead class="table table-sm alert-info">
                                <tr>
-                                   <th>ID</th>
+                                   <th>S/N</th>
                                    <th>Driver Names</th>
                                    <th>National ID</th>
                                    <th>License No</th>
@@ -344,59 +363,120 @@
                                    <th>Actions</th>
                                </tr>
                            </thead>
-                           <?php 
-                                while($row1=mysqli_fetch_assoc($result))
-                                {
-                            ?>
+                        
                            <tbody>
-             
+                           <?php
+                $i = 1;
+				$keyword = $_POST['keyword'];
+				$query = $link->prepare("SELECT * FROM `drivers` WHERE `driversname` LIKE '%$keyword%' or `licenseno` LIKE '%$keyword%' or `levels` LIKE '%$keyword%'  or `email` LIKE '%$keyword%'");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
                                <tr>
-                                   <td><?php echo $row1['id']; ?></td>
+                                   <td><?php echo $i++ ?></td>
                                    <td><?php echo $row1['driversname']; ?></td>
                                    <td><?php echo $row1['nida']; ?></td>
                                    <td><?php echo $row1['licenseno']; ?></td>
                                    <td><?php echo $row1['levels']; ?></td>
                                    <td><?php echo $row1['phone']; ?></td>
                                    <td><?php echo $row1['email']; ?></td>
-                                   <td> 
-                                      <form action="edit_drivers.php" method="POST">
-                                             <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
-                                             <button type="submit" name="edit_data" class="btn btn-success">Edit</button>
-                                             <a href="drivers.php?delete=<?php echo $row1['id']; ?>" class="btn btn-danger">Delete</a>
-                                       </form>
-                                   </td>
+                                   <td class="text-center">
+                                   <form action="edit_drivers.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['driver_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="drivers.php?delete=<?php echo $row1['driver_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
                                </tr>
+                               <?php
+				}
+			?>
                            </tbody>
-                <?php
-                    }
-
-                ?>
+               
                     </table>
+                    <?php		
+	}else{
+?>
+
+<table class="table table-sm" id="dataTable"  cellspacing="0" >
+                           <thead class="table table-sm alert-info">
+                               <tr>
+                                   <th>S/N</th>
+                                   <th>Driver Names</th>
+                                   <th>National ID</th>
+                                   <th>License No</th>
+                                   <th>Level</th>
+                                   <th>Phone</th>
+                                   <th>email</th> 
+                                   <th>Actions</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+			<?php
+                $i = 1;
+				$query = $link->prepare("SELECT * FROM `drivers`");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
+			<tr>
+                                  <td><?php echo $i++ ?></td>
+                                   <td><?php echo $row1['driversname']; ?></td>
+                                   <td><?php echo $row1['nida']; ?></td>
+                                   <td><?php echo $row1['licenseno']; ?></td>
+                                   <td><?php echo $row1['levels']; ?></td>
+                                   <td><?php echo $row1['phone']; ?></td>
+                                   <td><?php echo $row1['email']; ?></td>
+
+                                   <td class="text-center">
+                                   <form action="edit_drivers.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['driver_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="drivers.php?delete=<?php echo $row1['driver_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                  
+                                   
+                               </tr>
+                               <?php
+				}
+			?>
+                           </tbody>
+               
+                    </table>
+
+                    <?php
+	}
+$link = null;
+?>
                          </div>
                     </div>
                 </div>
              
                 </div>
-    
+                </div>
     </div>
     <!-- /.container-fluid -->
 
 
 
-<script>
-    const data2 = {
-        columns: []
-        rows:[
-            []
-        ],
-    };
-
-    const instance = new mdb.Datatable(document.getElementById('datatable'), data2)
-
-    document.getElementById('datatable-search-input').addEventListener('input', (e) => {
-        instance.input-group(e.target.value);
-    });
-</script>
 
 <?php 
 include('includes/scripts.php');

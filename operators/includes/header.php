@@ -23,33 +23,16 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
+    <link rel="stylesheet" href="css/app.css">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-    <!-- <script>
-        $(document).ready(function(){
-
-            $('#froms').on('change', function(){
-                var fromsID = $(this).val();
-                if(fromsID){
-                    $.get(
-                        "ajax.php",
-                        {froms: fromsID},
-                        function(data){
-                            $('#destination').html(data);
-                        }
-                    );
-                }else{
-                    $('#destination').html('<option> Selection destination </option>')
-                }
-            });
-        });
-    </script> -->
-
+   
 </head>
 
-<body id="page-top">
+<body id="page-top" height="" class="light">
 
     <!-- Page Wrapper -->
-    <div id="wrapper">
+    <div id="wrapper" class="w-100 p-3">
+        
 
     
 

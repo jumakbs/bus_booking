@@ -34,7 +34,7 @@
         $destination = $_POST['destination'];
         $price = $_POST['price'];
     
-    $query = "UPDATE routes SET via='$via', froms='$froms', destination='$destination', price='$price' WHERE id='$edit_id' ";
+    $query = "UPDATE routes SET via='$via', froms='$froms', destination='$destination', price='$price' WHERE route_id='$edit_id' ";
     $query_run = mysqli_query($link, $query);
 
     if($query_run){
@@ -54,8 +54,8 @@
     $result = mysqli_query($link, $query);
 
     if (isset($_GET['delete'])){
-        $id = $_GET['delete'];
-        $mysqli = "DELETE FROM routes WHERE id=$id";
+        $route_id = $_GET['delete'];
+        $mysqli = "DELETE FROM routes WHERE route_id=$route_id";
         $results = mysqli_query($link, $mysqli);
 
         $_SESSION['message'] = "Record has been deleted!";
@@ -259,11 +259,17 @@
             <!-- Nav Item - Alerts -->
             
            
-            <li class="nav-item dropdown no-arrow">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#Modal">
-                        <h5><b>Add route</b></h5>
-                        
-                    </a>
+<li class="nav-item dropdown no-arrow">
+                 <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between">
+                    <h4 class="card-title">List of Routes</h4> 
+                      <button class="btn btn-primary btn-icon-text" data-toggle="modal" data-target="#Modal">
+                        New Route
+                        <i class="btn-icon-append fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                 
                 
                 
                 <!-- Add form -->
@@ -327,83 +333,149 @@
                  </div>
                  </div>
               </div>
-           </li>  
+</li>  
                         
         </ul>
 </div>
         <!-- Content Row -->
                <div class="card-body">
-                   <div class="form-outline mb-4">
-                       <input type="search" class="form-control" id="dataTable-search-input" placeholder="Search">       
+              
+               <div class="col-md-3">
+                       <form method="POST" action="">
+                            <div class="input-group mb-3">
+                                 <input type="search" class="form-control" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"  placeholder="Search...." style="width: 150px" required=""/>
+                                 <button type="submit" name="search" class="btn btn-primary"><i class="fas fa-search fa-sm"></i></button>
+                                
+                            </div>
+                       </form>
                    </div>
-                   <div id="datatable">
+        <div class="table-responsive">
+                   <?php
+	// require the database connection
+	$link = new PDO( 'mysql:host=localhost;dbname=bus_booking', 'root', '');
+	if(!$link){
+		die("Error: Failed to coonect to database!");
+	}
+	if(ISSET($_POST['search'])){
+?>
+	 <table class="table table-sm"  cellspacing="0" >
+		<thead class="table table-sm alert-info">
+			<tr>
+                <th>S/N</th>
+			    <th>Via</th>
+				<th>From</th>
+				<th>Destination</th>
+				<th>Price</th>
+                <th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+                $i = 1;
+				$keyword = $_POST['keyword'];
+				$query = $link->prepare("SELECT * FROM `routes` WHERE `via` LIKE '%$keyword%' or `froms` LIKE '%$keyword%' or `destination` LIKE '%$keyword%'  or `price` LIKE '%$keyword%'");
+				$query->execute();
+				while($row = $query->fetch()){
+			?>
+			<tr>
+                <td><?php echo $i++ ?></td>
+				<td><?php echo $row['via']?></td>
+				<td><?php echo $row['froms']?></td>
+				<td><?php echo $row['destination']?></td>
+				<td><?php echo $row['price']?></td>
+                <td class="text-center">
+                                   <form action="edit_routes.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row['route_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['route_id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="routes.php?delete=<?php echo $row['route_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+				</td>
+               
+			</tr>
+			
+			
+			<?php
+				}
+			?>
+		</tbody>
+	</table>
+<?php		
+	}else{
+?>
+	<table class="table table-bordered">
+		<thead class="alert-info">
+			<tr>
+                <th>S/N</th>
+				<th>Via</th>
+				<th>From</th>
+				<th>Destination</th>
+				<th>Price</th>
+                <th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+                $i = 1;
+				$query = $link->prepare("SELECT * FROM `routes`");
+				$query->execute();
+				while($row = $query->fetch()){
+			?>
+			<tr>
+                <td><?php echo $i++ ?></td>
+				<td><?php echo $row['via']?></td>
+				<td><?php echo $row['froms']?></td>
+				<td><?php echo $row['destination']?></td>
+				<td><?php echo $row['price']?></td>
 
-                   </div>
-                   <div class="table-responsive">
-                        <table class="table table-sm" id="dataTable" width="100%" cellspacing="0" >
-                       
-                           <thead>
-                               <tr>
-                                   <th>ID</th>
-                                   <th>Route name(via)</th>
-                                   <th>FROM</th>
-                                   <th>DESTINATION</th>
-                                   <th>PRICE</th>
-                                   <th>ACTIONS</th>
-                               </tr>
-                           </thead>
-                           <?php 
-                                while($row1=mysqli_fetch_assoc($result))
-                                {
-                            ?>
-                           <tbody>
-             
-                               <tr>
-                                   <td><?php echo $row1['id']; ?></td>
-                                   <td><?php echo $row1['via']; ?></td>
-                                   <td><?php echo $row1['froms']; ?></td>
-                                   <td><?php echo $row1['destination']; ?></td>
-                                   <td><?php echo $row1['price']; ?></td>
-                                   <td> 
-                                      <form action="edit_routes.php" method="POST">
-                                             <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
-                                             <button type="submit" name="edit_data" class="btn btn-success">Edit</button>
-                                             <a href="routes.php?delete=<?php echo $row1['id']; ?>" class="btn btn-danger">Delete</a>
-                                       </form>
-                                   </td>
-                               </tr>
-                           </tbody>
-                <?php
-                    }
-
-                ?>
-                        </table>
+                <td class="text-center">
+                                   <form action="edit_routes.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row['route_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['route_id'] ?> ">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="routes.php?delete=<?php echo $row['route_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+				</td>    
+			</tr>
+			
+			
+			<?php
+				}
+			?>
+		</tbody>
+	</table>
+<?php
+	}
+$link = null;
+?>
                         </div>
                          </div>
                     </div>
                 </div>
              
-                </div>
+          
     
     </div>
     <!-- /.container-fluid -->
 
 
 
-<script>
-    const data2 = {
-        columns: []
-        rows:[
-            []
-        ],
-    };
-
-    const instance = new mdb.Datatable(document.getElementById('datatable'), data2)
-
-    document.getElementById('datatable-search-input').addEventListener('input', (e) => {
-        instance.input-group(e.target.value);
-    });
-</script>
 
 <?php 
 include('includes/scripts.php');

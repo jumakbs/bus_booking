@@ -254,7 +254,7 @@ if(!$link)
                                                 Total Buses </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php 
-                                                    $query = "SELECT id FROM buses ORDER BY id";
+                                                    $query = "SELECT bus_id FROM buses ORDER BY bus_id";
                                                     $query_run = mysqli_query($link, $query);
 
                                                     $row = mysqli_num_rows($query_run);
@@ -283,7 +283,7 @@ if(!$link)
                                                 Number Driver</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php 
-                                                    $query = "SELECT id FROM drivers ORDER BY id";
+                                                    $query = "SELECT driver_id FROM drivers ORDER BY driver_id";
                                                     $query_run = mysqli_query($link, $query);
 
                                                     $row = mysqli_num_rows($query_run);
@@ -312,7 +312,7 @@ if(!$link)
                                                 <div class="col-auto">
                                                     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
                                                 <?php 
-                                                    $query = "SELECT id FROM routes ORDER BY id";
+                                                    $query = "SELECT route_id FROM routes ORDER BY route_id";
                                                     $query_run = mysqli_query($link, $query);
 
                                                     $row = mysqli_num_rows($query_run);
@@ -341,10 +341,10 @@ if(!$link)
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Passengers</div>
+                                                Total Operators</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                             <?php 
-                                                    $query = "SELECT id FROM operators ORDER BY id";
+                                                    $query = "SELECT id FROM operators where user_type= 'operator' ORDER BY id";
                                                     $query_run = mysqli_query($link, $query);
 
                                                     $row = mysqli_num_rows($query_run);
@@ -362,32 +362,54 @@ if(!$link)
                         </div>
                     </div>
             <!-- Content Row -->
-            <div class="col-xl-6 col-lg-6">
+                    <!-- Content Row -->
+    <div class="row">    
+        <div class="col-xl-6 col-lg-6">
 
-    <!-- Area Chart -->
-    <div class="card shadow mb-6">
-        <?php
-         $query = $link->query("SELECT busname, seatno from buses GROUP BY busname");
+<!-- Area Chart -->
+            <div class="card shadow mb-6">
+            <?php
+     $query = $link->query("SELECT price as fare, concat(froms, ' to ' ,destination) as names from routes GROUP BY froms, destination");
+     
 
-         foreach($query as $data)
-         {
-             $busname[] = $data['busname'];
-             $seatno[] = $data['seatno'];
-         }
+     foreach($query as $datas)
+     {
         
-        ?>
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Area Chart</h6>
-        </div>
-        <div class="card-body">
-            <div class="chart-bar">
-                <canvas id="myAreaChart"></canvas>
+        
+         $routes[] = $datas['names'];
+         $fare[] = $datas['fare'];
+     }
+    
+    ?>
+                       <div class="card-header py-3">
+                             <h6 class="m-0 font-weight-bold text-primary"> Trip with its price</h6>
+                       </div>
+                    <div class="card-body">
+                          <div class="chart-bar">
+                              <canvas id="myBarChart"></canvas>
+                          </div>
+        
+                    </div>
             </div>
+
             
+            
+    </div>
+    <div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-6">
+    
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"> </h6>
+        </div>
+                       
+            <div class="card-body">
+                    <div class="chart-bar">
+                            <canvas id="myBarChart"></canvas>
+                    </div>
+        
+            </div>
         </div>
     </div>
-                
-
             </div>
             <!-- End of Main Content -->
 
@@ -403,8 +425,3 @@ include('includes/scripts.php');
 include('includes/footer.php');
 ?>
       
-
-    
-
-  
-  

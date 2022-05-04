@@ -249,9 +249,9 @@
 
       <?php
          if(isset($_POST['edit_data'])){
-             $id = $_POST['edit_id'];
+             $driver_id = $_POST['edit_id'];
 
-             $query = "SELECT * FROM drivers where id='$id'";
+             $query = "SELECT * FROM drivers where driver_id='$driver_id'";
              $query_run = mysqli_query($link,$query);
 
              foreach($query_run as $row1)
@@ -260,7 +260,7 @@
 
 <form action="drivers.php" method="POST">
 
-          <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
+          <input type="hidden" name="edit_id" value="<?php echo $row1['driver_id']; ?>">
 
            <div class="form-group">
                       <label for="">Full name</label>

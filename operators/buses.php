@@ -37,7 +37,7 @@
        $logo = $_POST['logo'];
        $seatno = $_POST['seatno'];
 
-       $query = "UPDATE buses SET busname='$busname', companyname='$companyname', busnumber='$busnumber', busclass='$busclass', insuranceno='$insuranceno', logo='$logo', seatno='$seatno' WHERE id='$edit_id' ";
+       $query = "UPDATE buses SET busname='$busname', companyname='$companyname', busnumber='$busnumber', busclass='$busclass', insuranceno='$insuranceno', logo='$logo', seatno='$seatno' WHERE bus_id='$edit_id' ";
        $query_run = mysqli_query($link, $query);
 
        if($query_run){
@@ -58,8 +58,8 @@
     $result = mysqli_query($link, $query);
 
     if (isset($_GET['delete'])){
-        $id = $_GET['delete'];
-        $mysqli = "DELETE FROM buses WHERE id=$id";
+        $bus_id = $_GET['delete'];
+        $mysqli = "DELETE FROM buses WHERE bus_id=$bus_id";
         $results = mysqli_query($link, $mysqli);
 
         $_SESSION['message'] = "Record has been deleted!";
@@ -68,6 +68,11 @@
         
     }
  
+
+    $sql = "SELECT * FROM buses";
+    $results = $link->query($sql);
+
+    
  ?>
  
  <!-- Content Wrapper -->
@@ -264,10 +269,15 @@
             <!-- Nav Item - Alerts -->
            
             <li class="nav-item dropdown no-arrow">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#busModal">
-                        <h5><b>Add Bus</b></h5>
-                        
-                    </a>
+            <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between">
+                    <h4 class="card-title">List of Buses</h4> 
+                      <button class="btn btn-primary btn-icon-text" data-toggle="modal" data-target="#busModal">
+                        New Bus
+                        <i class="btn-icon-append fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
                 
                 
                 <!-- Add form -->
@@ -300,9 +310,9 @@
                    <div class="form-group">
                       <label for="">BUS CATEGORY </label>
                       <select name="busclass" id="buses" class="form-control">
-                          <option value="first class"> first class</option>
-                          <option value="second class"> second class</option>
-                          <option value="third class"> third class</option>
+                          <option value="Juu"> Juu</option>
+                          <option value="Kati"> Kati</option>
+                          <option value="Chini"> chini</option>
                       </select>
 
                    </div>
@@ -334,17 +344,29 @@
 </div>
         <!-- Content Row -->
                <div class="card-body">
-                   <div class="form-outline mb-4">
-                       <input type="search" class="form-control" id="dataTable-search-input" placeholder="Search">       
-                   </div>
-                   <div id="datatable">
-
-                   </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm" id="dataTable" width="100%" cellspacing="0" >
-                           <thead>
+               <div class="col-md-3">
+                      <form method="POST" action="">
+                           <div class="input-group mb-3">
+                                <input type="search" class="form-control" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"  placeholder="Search...." style="width: 150px" required=""/>
+                                <button type="submit" name="search" class="btn btn-primary"><i class="fas fa-search fa-sm"></i></button>
+                               
+                           </div>
+                      </form>
+                  </div>
+                    <div class="table-responsive" >
+                    <?php
+	// require the database connection
+	$link = new PDO( 'mysql:host=localhost;dbname=bus_booking', 'root', '');
+	if(!$link){
+		die("Error: Failed to coonect to database!");
+	}
+	if(ISSET($_POST['search'])){
+?>
+                             <table class="table table-sm"  cellspacing="0" >
+                            
+                           <thead class="table table-sm alert-info">
                                <tr>
-                                   <th>ID</th>
+                                   <th>S/N</th>
                                    <th>Bus Names</th>
                                    <th>company name</th>
                                    <th>Bus number</th>
@@ -355,14 +377,19 @@
                                    <th>Actions</th>
                                </tr>
                            </thead>
-                           <?php 
-                                while($row1=mysqli_fetch_assoc($result))
-                                {
-                            ?>
-                           <tbody>
-             
+
+                     
+                          
+                           <tbody style="height: 350px">
+                           <?php
+                $i = 1;
+				$keyword = $_POST['keyword'];
+				$query = $link->prepare("SELECT * FROM `buses` WHERE `busname` LIKE '%$keyword%' or `companyname` LIKE '%$keyword%' or `busnumber` LIKE '%$keyword%'  or `busclass` LIKE '%$keyword%'");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
                                <tr>
-                                   <td><?php echo $row1['id']; ?></td>
+                                   <td><?php echo $i++ ?></td>
                                    <td><?php echo $row1['busname']; ?></td>
                                    <td><?php echo $row1['companyname']; ?></td>
                                    <td><?php echo $row1['busnumber']; ?></td>
@@ -370,23 +397,100 @@
                                    <td><?php echo $row1['insuranceno']; ?></td>
                                    <td><?php echo'<img src="img/'.$row1['logo'].'" width="50px;" height="40px;" class="img-responsive" alt="Cinque Terre">' ?></td>
                                    <td><?php echo $row1['seatno']; ?></td>
-                                   <td> 
-                                       <form action="buses_edit.php" method="POST">
-                                             <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
-                                             <button type="submit" name="edit_data" class="btn btn-success">Edit</button>
-                                             <a href="buses.php?delete=<?php echo $row1['id']; ?>" class="btn btn-danger">Delete</a>
-                                       </form>
 
-                                       
-                                   </td>
+                                   <td class="text-center">
+                                   <form action="buses_edit.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['bus_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="buses.php?delete=<?php echo $row1['bus_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                  
                                </tr>
+                               <?php
+				}
+			?>
                            </tbody>
-                <?php
-                    }
-
-                ?>
+                           
                         </table>
+                        <?php		
+	}else{
+?>
 
+<table class="table table-sm" cellspacing="0" >
+                            
+                            <thead class="table table-sm alert-info">
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Bus Names</th>
+                                    <th>company name</th>
+                                    <th>Bus number</th>
+                                    <th>Category</th>
+                                    <th>Insurance Number</th>
+                                    <th>logo</th> 
+                                    <th>Total seat</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+ 
+                      
+                           
+                            <tbody >
+                            <?php
+                $i = 1;
+				$query = $link->prepare("SELECT * FROM `buses`");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
+                 <tr>
+                                   <td><?php echo $i++ ?></td>
+                                   <td><?php echo $row1['busname']; ?></td>
+                                   <td><?php echo $row1['companyname']; ?></td>
+                                   <td><?php echo $row1['busnumber']; ?></td>
+                                   <td><?php echo $row1['busclass']; ?></td>
+                                   <td><?php echo $row1['insuranceno']; ?></td>
+                                   <td><?php echo'<img src="img/'.$row1['logo'].'" width="50px;" height="40px;" class="img-responsive" alt="Cinque Terre">' ?></td>
+                                   <td><?php echo $row1['seatno']; ?></td>
+
+                                   <td class="text-center">
+                                   <form action="buses_edit.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['bus_id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="#" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="buses.php?delete=<?php echo $row1['bus_id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                  
+                               </tr>
+                               <?php
+				}
+			?>
+             </tbody>
+             
+               
+               </table>
+
+               <?php
+}
+$link = null;
+?>
                          </div>
                     </div>
                 </div>
@@ -398,21 +502,6 @@
 
 </div>
 <!-- End of Main Content -->
-
-<script>
-    const data2 = {
-        columns: []
-        rows:[
-            []
-        ],
-    };
-
-    const instance = new mdb.Datatable(document.getElementById('datatable'), data2)
-
-    document.getElementById('datatable-search-input').addEventListener('input', (e) => {
-        instance.input-group(e.target.value);
-    });
-</script>
 
 <?php 
 include('includes/scripts.php');

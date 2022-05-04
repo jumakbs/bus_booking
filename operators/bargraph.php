@@ -26,6 +26,8 @@ $con  = mysqli_connect('localhost', 'root','', 'bus_booking');
         <title>Graph</title> 
     </head>
     <body>
+
+   
         <div style="width:40%;hieght:20%;text-align:center">
             <h2 class="page-header" >Analytics Reports </h2>
             <div>Product </div>
@@ -36,8 +38,22 @@ $con  = mysqli_connect('localhost', 'root','', 'bus_booking');
             <div>Product </div>
         <canvas id="myChart" width="100" height="100"></canvas>
         </div>
+
+        <div style="width:40%;hieght:20%;text-align:center">
+            <h2 class="page-header" >Analytics Reports </h2>
+            <div>Product </div>
+            <canvas id="chartJSContainer" width="600" height="400"></canvas>
+        </div>
+
+
+        <!-- <div style="width:40%;hieght:20%;text-align:center">
+            <h2 class="page-header" >QRCODE </h2>
+            <div>Product </div>
+            <canvas  id="chartjs_bar"></canvas> 
+        </div> -->
     </body>
   <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="qrcode.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 <script type="text/javascript">
       var ctx = document.getElementById("chartjs_bar").getContext('2d');
@@ -46,15 +62,9 @@ $con  = mysqli_connect('localhost', 'root','', 'bus_booking');
                     data: {
                         labels:<?php echo json_encode($busname); ?>,
                         datasets: [{
+                            label: "The price ",
                             backgroundColor: [
-                               "#5969ff",
-                                "#ff407b",
-                                "#25d5f2",
-                                "#ffc750",
-                                "#2ec551",
-                                "#7040fa",
-                                "#ff004e",
-                                "#ff004e",
+                              
                             ],
                             data:<?php echo json_encode($seatno); ?>,
                         }]
@@ -142,5 +152,97 @@ var myChart = new Chart(ctx, {
     }
   }
 });
+</script>
+
+
+
+<script>
+  var options = {
+  type: 'line',
+  data: {
+    labels: ["A", "B", "C", "D", "E", "F"],
+    datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      },
+      {
+        label: '# of Points',
+        data: [7, 11, 5, 8, 3, 7],
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    scales: {
+      x: {
+        position: 'bottom',
+        grid: {
+          offset: true // offset true to get labels in between the lines instead of on the lines
+        }
+      },
+      x2: {
+        position: 'top',
+        grid: {
+          offset: true // offset true to get labels in between the lines instead of on the lines
+        }
+      },
+      y: {
+        ticks: {
+          count: (context) => (context.scale.chart.data.labels1.length + 1)
+        }
+      }
+     
+    },
+    plugins: {
+      labelsY: {
+        font: 'Arial',
+        size: '14px',
+        color: '#666',
+        align: 'right',
+        reverseLabels: false // true to make A start at top and F at bottom
+      }
+    }
+  },
+  plugins: [{
+    id: 'labelsY',
+    afterDraw: (chart, args, options) => {
+      const {
+        ctx,
+        scales: {
+          y,
+          x
+        },
+        data: {
+          labels
+        }
+      } = chart;
+
+      let dupLabels = JSON.parse(JSON.stringify(labels)); // remove pointer to internal labels array so you dont get glitchy behaviour
+
+      if (options.reverseLabels) {
+        dupLabels = dupLabels.reverse();
+      }
+
+      dupLabels.forEach((label, i) => {
+        ctx.save();
+
+        ctx.textAlign = options.align || 'right';
+        ctx.font = `${options.size || '40px'} ${options.font || 'Arial'}`;
+        ctx.fillStyle = options.color || 'black'
+
+        let xPos = x.getPixelForValue(labels[0]) - ctx.measureText(label).width;
+        let yPos = (y.getPixelForValue(y.ticks[i].value) + y.getPixelForValue(y.ticks[i + 1].value)) / 2;
+
+        ctx.fillText(label, xPos, yPos)
+
+        ctx.restore();
+      });
+    }
+  }]
+}
+
+var ctx = document.getElementById('chartJSContainer').getContext('2d');
+new Chart(ctx, options);
 </script>
 </html>

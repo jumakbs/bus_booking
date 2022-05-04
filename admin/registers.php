@@ -20,6 +20,7 @@
         $fullname = $_POST['fullname'];
         $companyname = $_POST['companyname'];
         $email = $_POST['email'];
+        $user_type = $_POST['user_type'];
         $logo = $_POST['logo'];
         $officelocation = $_POST['officelocation'];
         $phone = $_POST['phone'];
@@ -27,8 +28,8 @@
         $passwords = $_POST['passwords'];
     
     // insertation code
-        $sql = "INSERT INTO operators (fullname, companyname, email, logo, officelocation, phone, workingtime, passwords) 
-                VALUES ( '$fullname','$companyname', '$email', '$logo', '$officelocation', '$phone', '$workingtime', '$passwords' )";
+        $sql = "INSERT INTO operators (fullname, companyname, email, user_type, logo, officelocation, phone, workingtime, passwords) 
+                VALUES ( '$fullname','$companyname', '$email', '$user_type', '$logo', '$officelocation', '$phone', '$workingtime', '$passwords' )";
         $result = mysqli_query($link, $sql);
     }
 
@@ -273,14 +274,20 @@
             <!-- Nav Item - Alerts -->
            
             <li class="nav-item dropdown no-arrow">
-                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#busModal">
-                        <h5><b>Add Bus</b></h5>
-                        
-                    </a>
+                    
+                <div class="border-top pt-3">
+                    <div class="d-flex justify-content-between">
+                    <h4 class="card-title">List of Operators</h4> 
+                      <button class="btn btn-primary btn-icon-text" data-toggle="modal" data-target="#operator">
+                        New Operator
+                        <i class="btn-icon-append fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
                 
                 
                 <!-- Add form -->
-    <div class="modal fade" id="busModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="operator" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -302,6 +309,11 @@
                    <div class="form-group">
                       <label for="">Email</label>
                       <input type="email" name="email" class="form-control"  placeholder="Enter email">
+                   </div>
+                   <div class="form-group">
+                       <select name="user_type" id="" class="form-control">>
+                           <option value="operator">operator</option>
+                       </select>
                    </div>
 
                    
@@ -345,17 +357,28 @@
 </div>
         <!-- Content Row -->
                <div class="card-body">
-                   <div class="form-outline mb-4">
-                       <input type="search" class="form-control" id="dataTable-search-input" placeholder="Search">       
-                   </div>
-                   <div id="datatable">
-
-                   </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm" id="dataTable" width="100%" cellspacing="0" >
+               <div class="col-md-3">
+                      <form method="POST" action="">
+                           <div class="input-group mb-3">
+                                <input type="search" class="form-control" name="keyword" value="<?php echo isset($_POST['keyword']) ? $_POST['keyword'] : '' ?>"  placeholder="Search...." style="width: 150px" required=""/>
+                                <button type="submit" name="search" class="btn btn-primary"><i class="fas fa-search fa-sm"></i></button>
+                               
+                           </div>
+                      </form>
+                  </div>
+<div class="table-responsive">
+<?php
+	// require the database connection
+	$link = new PDO( 'mysql:host=localhost;dbname=bus_booking', 'root', '');
+	if(!$link){
+		die("Error: Failed to coonect to database!");
+	}
+	if(ISSET($_POST['search'])){
+?>
+                        <table class="table table-sm" id="dataTable"  cellspacing="0" >
                         <thead>
                                            <tr>
-                                               <th>ID</th>
+                                               <th>S/N</th>
                                                <th>Names</th>
                                                <th>company </th>
                                                <th>email</th>
@@ -363,18 +386,20 @@
                                                <th>office location</th>
                                                <th>phone No</th>
                                                <th>working Time</th>
-                                               <th>Actions</th>
+                                               <th class="text-center">Actions</th>
 
                                            </tr>
                                        </thead>
-                                       <?php 
-                                            while($row1=mysqli_fetch_assoc($result))
-                                            {
-                                        ?>
                                        <tbody>
-                         
+            <?php
+                $i = 1;
+				$keyword = $_POST['keyword'];
+				$query = $link->prepare("SELECT *  FROM operators WHERE user_type='operator' AND `fullname` LIKE '%$keyword%' or `companyname` LIKE '%$keyword%' or `email` LIKE '%$keyword%'  or `officelocation` LIKE '%$keyword%' ");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
                                            <tr>
-                                               <td><?php echo $row1['id']; ?></td>
+                                               <td><?php echo $i++ ?></td>
                                                <td><?php echo $row1['fullname']; ?></td>
                                                <td><?php echo $row1['companyname']; ?></td>
                                                <td><?php echo $row1['email']; ?></td>
@@ -382,22 +407,97 @@
                                                <td><?php echo $row1['officelocation']; ?></td>
                                                <td><?php echo $row1['phone']; ?></td>
                                                <td><?php echo $row1['workingtime']; ?></td>
-                                   <td> 
+                                                
+                                  
+                                   <td class="text-center">
                                    <form action="edit_registered.php" method="POST">
-                                             <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
-                                             <button type="submit" name="edit_data" class="btn btn-success">Edit</button>
-                                             <a href="registers.php?delete=<?php echo $row1['id']; ?>" class="btn btn-danger">Delete</a>
-                                       </form>
-       
-                                       </td>
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu" >
+		                                 <a class="dropdown-item" href="view.php" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="registers.php?delete=<?php echo $row1['id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                             
                                </tr>
+                               <?php
+				}
+			?> 
                            </tbody>
-                <?php
-                    }
-
-                ?>
+                
                         </table>
+                        <?php		
+	}else{
+?>
+<table class="table table-sm" id="dataTable"  cellspacing="0" >
+                                      <thead>
+                                           <tr>
+                                               <th>S/N</th>
+                                               <th>Names</th>
+                                               <th>company </th>
+                                               <th>email</th>
+                                               <th>logo</th>
+                                               <th>office location</th>
+                                               <th>phone No</th>
+                                               <th>working Time</th>
+                                               <th class="text-center">Actions</th>
 
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                       <?php
+                $i = 1;
+				$query = $link->prepare("SELECT *  FROM operators where user_type='operator' ");
+				$query->execute();
+				while($row1 = $query->fetch()){
+			?>
+
+            
+<tr>
+                                               <td><?php echo $i++ ?></td>
+                                               <td><?php echo $row1['fullname']; ?></td>
+                                               <td><?php echo $row1['companyname']; ?></td>
+                                               <td><?php echo $row1['email']; ?></td>
+                                               <td><?php echo'<img src="img/'.$row1['logo'].'" width="50px;" height="40px;" alt="Image">' ?></td>
+                                               <td><?php echo $row1['officelocation']; ?></td>
+                                               <td><?php echo $row1['phone']; ?></td>
+                                               <td><?php echo $row1['workingtime']; ?></td>
+                                                
+                                  
+                                   <td class="text-center">
+                                   <form action="edit_registered.php" method="POST">
+                                   <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
+							               <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+		                                           Action
+		                                   </button>
+		                             <div class="dropdown-menu">
+		                                 <a class="dropdown-item" href="view.php" data-id="<?php echo $row['id'] ?>">View</a>
+		                              <div class="dropdown-divider"></div>
+                                              <button type="submit" name="edit_data" class="dropdown-item">Edit</button>
+		                              <div class="dropdown-divider"></div>
+                                      <a href="registers.php?delete=<?php echo $row1['id']; ?>" class="dropdown-item">Delete</a>
+		                                   
+		                              </div>
+                                    </form>
+						           </td>
+                                             
+                               </tr>
+                               <?php
+				}
+			?>
+                           </tbody>
+                           </table>
+<?php
+}
+$link = null;
+?>
 
                          </div>
                     </div>

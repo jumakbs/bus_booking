@@ -1,36 +1,35 @@
-//code for updating the contents
-if(isset($_POST['update_btn'])){
-    $edit_id = $_POST['edit_id'];
-    $busname = $_POST['busname'];
-    $companyname = $_POST['companyname'];
-    $busnumber = $_POST['busnumber'];
-    $busclass = $_POST['busclass'];
-    $insuranceno = $_POST['insuranceno'];
-    $seatno = $_POST['seatno'];
-    $logo = $_FILES["logo"]['name'];
+<?php
 
-    if(file_exists("img/" .$_FILES["logo"]["name"]))
-    {
-        $store = $_FILES["logo"]["name"];
-        $_SESSION['status'] = "image already exists. '.$store.'";
-        header('Location: buses.php');
+class crud{
+    private $link;
+
+
+    function __construct($link){
+        $this->db = $link;
     }
 
-    else {
-     $query = "UPDATE buses SET busname='$busname', companyname='$companyname', busnumber='$busnumber', busclass='$busclass', insuranceno='$insuranceno', logo='$logo', seatno='$seatno' WHERE id='$edit_id' ";
-     $query_run = mysqli_query($link, $query);
-
-         if($query_run){
-              move_uploaded_file($_FILES["logo"]["tmp_name"], "img/".$_FILES["logo"]["name"]);
-              $_SESSION['success'] = "bus info updates";
-              header('Location: buses.php');
-             
-          }
-         else{
-         $_SESSION['status'] = "bus info not updated";
-         header('Location: buses.php');
-         }
-
-     }
-
+    public function insertAttendees($fullname, $email, $logo, $phone, $officelocation)
 }
+//Get all attendees
+
+?>
+
+<div class="card" style="width: 18rem;">
+<div class="card-body">
+    <p>
+        <?php  echo $_POST['logo']; ?>       
+    </p>
+    <h5 class="card-title">
+        <?php echo $_POST['fullname']. '' .$_POST['phone']; ?>
+    </h5>
+    <h6>
+        <?php  echo $_POST['companyname']; ?>
+    </h6>
+    <p>
+        Email Address: <?php echo $_POST['officelocation']; ?>
+    </p>
+    <p>
+        Email Address: <?php echo $_POST['email']. ''  .$_POST['workingtime']; ?>
+    </p>
+</div>
+</div>

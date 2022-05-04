@@ -248,9 +248,9 @@
 
       <?php
          if(isset($_POST['edit_data'])){
-             $id = $_POST['edit_id'];
+             $trip_id = $_POST['edit_id'];
 
-             $query = "SELECT * FROM assigntrip where id='$id'";
+             $query = "SELECT * FROM assigntrip where trip_id='$trip_id'";
              $query_run = mysqli_query($link,$query);
 
              foreach($query_run as $row1)
@@ -259,7 +259,7 @@
 
 <form action="assigntrip.php" method="POST">
 
-           <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
+           <input type="hidden" name="edit_id" value="<?php echo $row1['trip_id']; ?>">
 
            <div class="form-group">
                       <label for="">DRIVER NAME </label>
@@ -281,14 +281,14 @@
                    
                    <div class="form-group">
                       <label for="">FROM </label>
-                      <select name="froms" id="froms" class="form-control">
+                      <select name="route_id" id="froms" class="form-control">
                           <option > from where</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT froms FROM routes ";
+                            $query = "SELECT  DISTINCT froms,route_id FROM routes GROUP BY froms ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['froms'].'">'.$row['froms'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['froms'].'</option>';
                             }
 
                             ?>
@@ -297,14 +297,14 @@
                    </div>
                    <div class="form-group">
                       <label for="">VIA</label>
-                      <select name="via" id="via" class="form-control">
+                      <select name="route_id" id="via" class="form-control">
                           <option > via </option>
                             <?php
                             
-                            $query = "SELECT DISTINCT via FROM routes ";
+                            $query = "SELECT  via,route_id FROM routes GROUP BY via ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['via'].'">'.$row['via'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['via'].'</option>';
                             }
 
                             ?>
@@ -315,14 +315,14 @@
 
                    <div class="form-group">
                       <label for="">DESTINATION </label>
-                      <select name="destination" id="destination" class="form-control">
+                      <select name="route_id" id="destination" class="form-control">
                           <option > To where</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT destination FROM routes ";
+                            $query = "SELECT destination,route_id FROM routes GROUP BY destination ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['destination'].'">'.$row['destination'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['destination'].'</option>';
                             }
 
                             ?>
@@ -331,14 +331,14 @@
                    </div>
                    <div class="form-group">
                       <label for="">BUS NAME </label>
-                      <select name="busname" id="busname" class="form-control">
+                      <select name="bus_id" id="busname" class="form-control">
                           <option > To where</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT busname FROM buses ";
+                            $query = "SELECT DISTINCT busname,bus_id FROM buses ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['busname'].'">'.$row['busname'].'</option>';
+                                echo '<option value="'.$row['bus_id'].'">'.$row['busname'].'</option>';
                             }
 
                             ?>
@@ -348,18 +348,19 @@
 
                    <div class="form-group">
                       <label for="">PRICE </label>
-                      <select name="price" id="price" class="form-control">
+                      <select name="route_id" id="price" class="form-control">
                           <option > Select bus fare</option>
                             <?php
                             
-                            $query = "SELECT DISTINCT price FROM routes ";
+                            $query = "SELECT price,route_id FROM routes GROUP BY price  ";
                             $do = mysqli_query($link,$query);
                             while($row = mysqli_fetch_array($do)){
-                                echo '<option value="'.$row['price'].'">'.$row['price'].'</option>';
+                                echo '<option value="'.$row['route_id'].'">'.$row['price'].'</option>';
                             }
 
                             ?>
                       </select>
+
 
                    </div>
 

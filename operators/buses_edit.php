@@ -249,9 +249,9 @@
 
       <?php
          if(isset($_POST['edit_data'])){
-             $id = $_POST['edit_id'];
+             $bus_id = $_POST['edit_id'];
 
-             $query = "SELECT * FROM buses where id='$id'";
+             $query = "SELECT * FROM buses where bus_id='$bus_id'";
              $query_run = mysqli_query($link,$query);
 
              foreach($query_run as $row1)
@@ -260,7 +260,7 @@
 
 <form action="buses.php" method="POST">
 
-           <input type="hidden" name="edit_id" value="<?php echo $row1['id']; ?>">
+           <input type="hidden" name="edit_id" value="<?php echo $row1['bus_id']; ?>">
 
             <div class="form-group">
                 <label for="">BUS NAME</label>
@@ -281,10 +281,10 @@
  
             <div class="form-group">
                  <label for="">BUS CATEGORY </label>
-                 <select name="busclass" id="buses" class="form-control" >
-                       <option value="first class"> first class</option>
-                       <option value="second class"> second class</option>
-                       <option value="third class"> third class</option>
+                 <select name="busclass" id="buses" class="form-control">
+                          <option value="Juu"> Juu</option>
+                          <option value="Kati"> Kati</option>
+                          <option value="Chini"> chini</option>
                  </select>
 
             </div>
